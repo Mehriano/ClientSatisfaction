@@ -1,7 +1,8 @@
-const winston = require('winston');
+
 const mongoose = require('mongoose');
 
 module.exports = function() {
-  mongoose.connect('mongodb://localhost/ClientSatisfaction')
-    .then(() => winston.info('Connected to MongoDB...'));
+  mongoose.connect('mongodb://localhost/ClientSatisfaction', {useNewUrlParser: true})
+    .then(() => console.log('Connected to MongoDB...'))
+    .catch((err) => console.log('cant connect to db', err));
 }

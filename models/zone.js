@@ -14,16 +14,19 @@ const zoneschema = new mongoose.Schema({
           required: true
       }
 });
-const Zone = mongoose.model('Ville',zoneschema);
+  
+const Zone = mongoose.model('Zone',zoneschema);
 
-function validateVille (ville) {
+function validateZone (zone) {
  const schema = {
-    nom: Joi.string().min(5).max(50).required()
+    nom: Joi.string().min(5).max(50).required(),
+    villeId: Joi.objectId().required()
  };
 
- return Joi.validate(ville, schema);
+ return Joi.validate(zone, schema);
 }
 
 
-exports.Ville = Ville; 
-exports.validate = validateVille;
+exports.Zone = Zone; 
+exports.zoneschema = zoneschema;
+exports.validate = validateZone;
