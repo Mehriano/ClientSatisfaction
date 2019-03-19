@@ -1,6 +1,8 @@
 const config = require('config');
 const jwt = require('jsonwebtoken');
 const Joi = require('joi');
+const {zoneschema} = require('./zone');
+const {boutiqueschema} = require('./boutique');
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
@@ -46,7 +48,15 @@ const userSchema = new mongoose.Schema({
   role: {
       type: String,
       required: true,
-      enum: ['Administrateur', 'ResponsablePersonel', 'ResponsableZone']
+      enum: ['Administrateur', 'ResponsablePersonel', 'ResponsableZone','None']
+  },
+  zone: {
+    type: zoneschema,
+    required : role =='ResponsableZone'? true: false
+  },
+  boutique: {
+    type: boutiqueschema,
+    required: role=='ResponsablePersonel'? true: false
   }
 });
 
@@ -63,9 +73,20 @@ function validateUser(user) {
     prenom: Joi.string().min(5).max(50).required(),
     ussername: Joi.string().min(5).max(50).required(),
     cin: Joi.number().required(),// To Do Number must be at least 8 characters + concidering changing from int to string
-    cin: Joi.number().required(),//  To Do regex  to form a valid phoneNumber 
+    phoneNumber: Joi.number().required(),//  To Do regex  to form a valid phoneNumber 
     email: Joi.string().min(5).max(255).required().email(),
-    password: Joi.string().min(5).max(255).required()
+    password: Joi.string().min(5).max(255).required(),
+    role: Joi.string().required(),
+    zoneId: Joi.when('role',{
+      is: 'ResponsableZone',
+      then: Joi.objectId().required(),
+      otherwise: Joi.optional()
+    }),
+    boutiqueId: Joi.when('role',{
+      is: 'ResponsablePersonel',
+      then: Joi.objectId().required(),
+      otherwise: Joi.optional()
+    })
   };
 
   return Joi.validate(user, schema);

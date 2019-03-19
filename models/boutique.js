@@ -8,16 +8,16 @@ const boutiqueschema = new mongoose.Schema({
         required: true,
         minlength: 5,
         maxlength: 50
-      },
+    },
     zone: {
           type:  zoneschema,
           required: true
-      }, 
+    }, 
     lieu: { 
         type: String
     }, 
     responsable: {
-        type: mongoose.Schema.Types.objectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
     
@@ -31,12 +31,12 @@ function validateBoutique (boutique) {
     nom: Joi.string().min(5).max(50).required(),
     zone: Joi.objectId().required(),
     lieu: Joi. string(),
-    responsbale: Joi.objectId()
+    responsbaleId: Joi.objectId()
  };
 
  return Joi.validate(boutique, schema);
 }
 
-
+exports.boutiqueschema = boutiqueschema;
 exports.Boutique = Boutique; 
 exports.validate = validateBoutique;
