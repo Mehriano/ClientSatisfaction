@@ -52,11 +52,11 @@ const userSchema = new mongoose.Schema({
   },
   zone: {
     type: zoneschema,
-    required : role =='ResponsableZone'? true: false
+    required : this.role =='ResponsableZone'? true: false
   },
   boutique: {
     type: boutiqueschema,
-    required: role=='ResponsablePersonel'? true: false
+    required: this.role =='ResponsablePersonel'? true: false
   }
 });
 
@@ -71,12 +71,12 @@ function validateUser(user) {
   const schema = {
     nom: Joi.string().min(5).max(50).required(),
     prenom: Joi.string().min(5).max(50).required(),
-    ussername: Joi.string().min(5).max(50).required(),
+    userName: Joi.string().min(5).max(50).required(),
     cin: Joi.number().required(),// To Do Number must be at least 8 characters + concidering changing from int to string
-    phoneNumber: Joi.number().required(),//  To Do regex  to form a valid phoneNumber 
+    phone: Joi.number().required(),//  To Do regex  to form a valid phoneNumber 
     email: Joi.string().min(5).max(255).required().email(),
     password: Joi.string().min(5).max(255).required(),
-    role: Joi.string().required(),
+    role: Joi.string().valid('Administrateur','ResponsablePersonnel','ResponsableZone','None').required(),
     zoneId: Joi.when('role',{
       is: 'ResponsableZone',
       then: Joi.objectId().required(),

@@ -19,6 +19,10 @@ const boutiqueschema = new mongoose.Schema({
     responsable: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    }, 
+    questionnaire: { 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Questionnaire'
     }
     
 
@@ -29,9 +33,10 @@ const Boutique = mongoose.model('Boutique',boutiqueschema);
 function validateBoutique (boutique) {
  const schema = {
     nom: Joi.string().min(5).max(50).required(),
-    zone: Joi.objectId().required(),
+    zoneId: Joi.objectId().required(),
     lieu: Joi. string(),
-    responsbaleId: Joi.objectId()
+    responsbaleId: Joi.objectId(),
+    questionnaireId: Joi.objectId()
  };
 
  return Joi.validate(boutique, schema);

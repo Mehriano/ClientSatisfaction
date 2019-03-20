@@ -3,7 +3,10 @@ const {Zone} = require('../models/zone');
 const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-
+const {User} = require('../models/user');
+const{Questionnaire}= require('../models/questionnaire');
+const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 router.get('/', async (req, res) => {
   const boutiques = await Boutique.find().sort('name');
   res.send(boutiques);
@@ -15,7 +18,9 @@ router.post('/',[auth,admin], async (req, res) => {
 
   const zone = await Zone.findById(req.body.zoneId);
   if (!zone) return res.status(400).send('Invalid zone.');
-  const responsable = await User.findById(req.body.responsableId);
+  let responsable = await User.findById(req.body.responsableId);
+  let questionnaire = await Questionnaire.findById(req.body.questionnaireId);
+
   const boutique = new Boutique({ 
     nom: req.body.nom,
     zone: { 
@@ -24,7 +29,8 @@ router.post('/',[auth,admin], async (req, res) => {
         ville: zone.ville 
     },
     lieu: req.body.lieu,
-    responsable: responsable._id
+    responsable: responsable == null?null:responsable._id,
+    questionnaire: questionnaire ==null ?null :questionnaire._id
   });
   await boutique.save();
   
@@ -38,7 +44,7 @@ router.put('/:id',[auth,admin], async (req, res) => {
 
   const zone = await Zone.findById(req.body.zoneId);
   if (!zone) return res.status(400).send('Invalid zone.');
-
+ 
   const boutique = await Zone.findByIdAndUpdate(req.params.id,
     { 
       nom: req.body.nom,
@@ -48,7 +54,8 @@ router.put('/:id',[auth,admin], async (req, res) => {
           ville: zone.ville 
       },
       lieu: req.body.lieu,
-      responsable: responsable._id
+      responsable: responsableId,
+      questionnaire: questionnaireId
       
     }, { new: true });
 
