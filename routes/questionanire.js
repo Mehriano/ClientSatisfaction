@@ -1,76 +1,149 @@
-const {Ville} = require('../models/ville'); 
-const {Zone, validate} = require('../models/zone'); 
-const mongoose = require('mongoose');
-const express = require('express');
+const { Question, validateQuestion } = require("../models/question");
+const { Questionnaire, validate } = require("../models/questionnaire");
+const { Proposition, validateProposition } = require("../models/proposition");
+const mongoose = require("mongoose");
+const express = require("express");
 const router = express.Router();
-const auth = require('../middleware/auth');
-const admin = require('../middleware/admin');
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
-router.get('/', async (req, res) => {
-  const zones = await Zone.find().sort('name');
-  res.send(zones);
-});
-router.get('/ville/:id', async (req, res) => {
-    const zones = await Zone.find({ville: req.body.villeId}).sort('name');
-  res.send(zones);
+router.get("/", async (req, res) => {
+  const questionnaire = await Questionnaire.find();
+  res.send(questionnaire);
 });
 
-router.post('/',[auth,admin], async (req, res) => {
-  const { error } = validate(req.body); 
+router.post("/", [auth, admin], async (req, res) => {
+  const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
-
-  const ville = await Ville.findById(req.body.villeId);
-  if (!ville) return res.status(400).send('Invalid ville.');
-
-  const zone = new Zone({ 
-    nom: req.body.nom,
-    ville: { 
-        _id: ville._id,
-        nom: ville.nom
+  let questions = [];
+  let prop = {};
+  let ques = {};
+  let props = [];
+  req.body.questions.forEach(question => {
+    ques = new Question({
+      titreQuestion: question.titreQuestion,
+      ordre: question.ordre,
+      type: question.type
+    });
+    ques.save();
+    if (question.propositions) {
+      question.propositions.forEach(proposition => {
+        prop = new Proposition({
+          titreProposition: proposition.titreProposition,
+          alert: proposition.alert,
+          question: ques._id
+        });
+        prop.save();
+        props.push(prop);
+      });
+      ques.propositions = props;
+      ques.update();
     }
+
+    questions.push(ques);
   });
-  await zone.save();
-  
-  res.send(zone);
+
+  const questionnaire = new Questionnaire({
+    titreQuestioannaire: req.body.titreQuestioannaire,
+    questions: questions
+  });
+  await questionnaire.save();
+
+  res.send(questionnaire);
 });
 
+router.put("/:id", [auth, admin], async (req, res) => {
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+  req.body.questions.forEach(question => {
+    if (question.propositions) {
+      question.propositions.forEach(proposition => {
+        Proposition.findByIdAndUpdate(
+          proposition._id,
+          {
+            titreProposition: proposition.titreProposition,
+            alert: proposition.alert,
+            question: proposition.question
+          }
+        );
+        
+      });
+    }
+     Question.findByIdAndUpdate(
+      question._id,
+      {
+        titreQuestion: question.titreQuestion,
+        ordre: question.ordre,
+        type: question.type,
+        propositions: question.propositions
+      } );
+  });
 
-router.put('/:id',[auth,admin], async (req, res) => {
-  const { error } = validate(req.body); 
+  const questionnaire = await Questionnaire.findByIdAndUpdate(
+    req.params.id,
+    {
+      titreQuestioannaire: req.body.titreQuestioannaire,
+      questions: req.body.questions
+    },
+    { new: true }
+  );
+
+  if (!questionnaire) return res.status(404).send("questionnaire not found.");
+
+  res.send(questionnaire);
+});
+
+router.put("/question/:id", [auth, admin], async (req, res) => {
+  const { error } = validateQuestion(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const ville = await Ville.findById(req.body.villeId);
-  if (!ville) return res.status(400).send('Invalid ville.');
+  const question = await Question.findByIdAndUpdate(
+    req.params.id,
+    {
+      titreQuestion: req.body.titreQuestion,
+      ordre: req.body.ordre,
+      type: req.body.type
+    },
+    { new: true }
+  );
 
-  const zone = await Zone.findByIdAndUpdate(req.params.id,
-    { 
-      nom: req.body.nom,
-      ville: {
-          _id: ville._id,
-          nom: ville.nom
-      }
-      
-    }, { new: true });
+  if (!question) return res.status(404).send("question not found.");
 
-  if (!zone) return res.status(404).send('zone not found.');
-  
-  res.send(zone);
+  res.send(question);
+});
+router.put("/proposition/:id", [auth, admin], async (req, res) => {
+  const { error } = validateQuestion(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  const question = await Question.findByIdAndUpdate(
+    req.params.id,
+    {
+      titreQuestion: req.body.titreQuestion,
+      ordre: req.body.ordre,
+      type: req.body.type
+    },
+    { new: true }
+  );
+
+  if (!question) return res.status(404).send("question not found.");
+
+  res.send(question);
 });
 
-router.delete('/:id',[auth,admin], async (req, res) => {
-  const zone = await Ville.findByIdAndRemove(req.params.id);
+router.delete("/:id", [auth, admin], async (req, res) => {
+  const questionnaire = await Questionnaire.findByIdAndRemove(req.params.id);
 
-  if (!zone) return res.status(404).send('zone not found.');
+  if (!questionnaire) return res.status(404).send("questionnaire not found.");
 
-  res.send(zone);
+  res.send(questionnaire);
 });
 
-router.get('/:id', async (req, res) => {
-  const zone = await Zone.findById(req.params.id);
+router.get("/:id", async (req, res) => {
+  const questionnaire = await Questionnaire.findById(req.params.id);
 
-  if (!zone) return res.status(404).send('zone not found.');
+  if (!questionnaire) return res.status(404).send("questionnaire not found.");
 
-  res.send(zone);
+  res.send(questionnaire);
 });
 
-module.exports = router; 
+module.exports = router;

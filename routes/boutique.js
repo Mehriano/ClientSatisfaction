@@ -44,7 +44,8 @@ router.put('/:id',[auth,admin], async (req, res) => {
 
   const zone = await Zone.findById(req.body.zoneId);
   if (!zone) return res.status(400).send('Invalid zone.');
- 
+  let responsable = await User.findById(req.body.responsableId);
+  let questionnaire = await Questionnaire.findById(req.body.questionnaireId);
   const boutique = await Zone.findByIdAndUpdate(req.params.id,
     { 
       nom: req.body.nom,
@@ -54,8 +55,8 @@ router.put('/:id',[auth,admin], async (req, res) => {
           ville: zone.ville 
       },
       lieu: req.body.lieu,
-      responsable: responsableId,
-      questionnaire: questionnaireId
+      responsable: responsable == null?null:responsable._id,
+      questionnaire: questionnaire ==null ?null :questionnaire._id
       
     }, { new: true });
 

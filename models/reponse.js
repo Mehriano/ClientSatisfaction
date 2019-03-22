@@ -3,12 +3,11 @@ const mongoose = require('mongoose');
 const {propositionshema} = require('./proposition');
  
 const reponseshema = new mongoose.Schema({
-    /*
-    numfacture: { 
-        type: String
-        This if i decide to include an invoice to answer online 
+    
+    numFacture: {  //num boutique 
+        type: String 
     }
-    */ 
+    ,
     contenuReponse: {
         type: String,
         minlength: 5,
@@ -26,6 +25,7 @@ const Reponse = mongoose.model('Reponse',reponseshema);
 
 function validateReponse (reponse) {
  const schema = Joi.object().keys({
+     numFacture: Joi.string(),
      contenuReponse: Joi.string(),
      propositionId: Joi.objectId(),
      questionId: Joi.objectId().required(),
@@ -34,8 +34,12 @@ function validateReponse (reponse) {
 
  return Joi.validate(reponse, schema);
 }
-
+function findBoutiqueId(reponse){
+ const boutiqueUuid = 12345; //this needs to be modified el gamel maybe or affine cypher if possible;
+ return Boutique.findOne({uuid: boutiqueUuid}) || null;
+}
 exports.Reponseshema = reponseshema;
 //exports.ReponseJoiShema = schema; 
+exports.findBoutiqueId = findBoutiqueId;
 exports.Reponse = Reponse; 
 exports.validate = validateReponse;
