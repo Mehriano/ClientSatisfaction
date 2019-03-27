@@ -23,6 +23,12 @@ const boutiqueschema = new mongoose.Schema({
     questionnaire: { 
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Questionnaire'
+    },
+    uuid:{
+        type: number,
+        required: true,
+        min: 1000,
+        max: 9999
     }
     
 
@@ -36,7 +42,8 @@ function validateBoutique (boutique) {
     zoneId: Joi.objectId().required(),
     lieu: Joi. string(),
     responsbaleId: Joi.objectId(),
-    questionnaireId: Joi.objectId()
+    questionnaireId: Joi.objectId(),
+    uuid: Joi.number().min(1000).max(9999)
  };
 
  return Joi.validate(boutique, schema);

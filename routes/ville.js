@@ -18,9 +18,13 @@ router.post('/',[auth,admin], async (req, res) => {
   const ville = new Ville({ 
     nom: req.body.nom
   });
+  try{
   await ville.save();
-  
+
   res.send(ville);
+  }catch(err){
+    return res.status(400).send(err.message);
+  }
 });
 
 router.put('/:id',[auth,admin], async (req, res) => {
@@ -39,10 +43,10 @@ router.put('/:id',[auth,admin], async (req, res) => {
 });
 
 router.delete('/:id',[auth,admin], async (req, res) => {
-  const ville = await Ville.findByIdAndRemove(req.params.id);
+  const ville = await Ville.findById(req.params.id);
 
   if (!ville) return res.status(404).send('ville not found.');
-
+  ville.remove();
   res.send(ville);
 });
 

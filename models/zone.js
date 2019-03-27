@@ -14,7 +14,13 @@ const zoneschema = new mongoose.Schema({
           required: true
       }
 });
-  
+  zoneschema.pre('remove', async function(next){
+    let boutique = await this.model('Boutique').find({'zone._id': this._id});
+    console.log(boutique);
+   if (boutique.length>0) return next(new Error('can\'t delete this zone !!! it contains one or more Boutiques'));
+   return next();
+   } );
+
 const Zone = mongoose.model('Zone',zoneschema);
 
 function validateZone (zone) {

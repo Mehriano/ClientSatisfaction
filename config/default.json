@@ -1,3 +1,8 @@
 {
-    "jwtPrivateKey": "ClientSatisfactionps_jwtPrivateKey"
-  }
+  "jwtPrivateKey": "ClientSatisfactionps_jwtPrivateKey",
+  "myEmail": "app.aymen.mehri@gmail.com",
+  "myPassword": "testTest-123",
+  "cryptKey": 1324554401,
+  "decryptKey": 248007521,
+  "m": 4288266240
+}

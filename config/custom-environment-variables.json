@@ -1,3 +1,5 @@
 {
-    "jwtPrivateKey": "ClientSatisfactionps_jwtPrivateKey"
-  }
+  "jwtPrivateKey": "jwtPrivateKey",
+  "myEmail": "myEmail",
+  "myPassword" : "myPassword"
+}

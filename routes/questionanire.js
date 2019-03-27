@@ -6,6 +6,8 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
+const {Reponse} = require('../models/reponse');
+const {numFactureToBoutique}= require ('../functions/numFactureToBoutique');
 
 router.get("/", async (req, res) => {
   const questionnaire = await Questionnaire.find();
@@ -146,4 +148,13 @@ router.get("/:id", async (req, res) => {
   res.send(questionnaire);
 });
 
+router.get("/numfacture/:NumFacture", async(req, res) => {
+  let reponses =  await Reponse.find({numfacture: req.params.numFacture});
+  if (reponses.length > 2) return res.status(400).send('you already answerd the questions thank you for choosing our service!');
+  let boutique = numFactureToBoutique(req.params.numFacture);
+  if(!boutique) return res.status(404).send('NumFacture dosn\'t correspond to any boutique' );
+  if (boutique.questionnaire == null) return res.status(404).send('sorry there is no survey for you to answer right now try later!!');
+  let questionnaire = await Questionnaire.findById(boutique.questionnaire);
+  return res.status(200).send(questionnaire);
+}); 
 module.exports = router;
