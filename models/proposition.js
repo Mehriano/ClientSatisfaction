@@ -26,7 +26,7 @@ const Proposition = mongoose.model('Proposition',propositionshema);
 const schema = Joi.object().keys({
   titreProposition: Joi.string().min(2).max(512).required(),
   alert: Joi.boolean().required(),
-  quesionId: Joi.objectId().required()
+  quesionId: Joi.objectId()
 });
 function validateProposition (proposition) {
  return Joi.validate(proposition, schema);

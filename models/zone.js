@@ -26,7 +26,8 @@ const Zone = mongoose.model('Zone',zoneschema);
 function validateZone (zone) {
  const schema = {
     nom: Joi.string().min(5).max(50).required(),
-    villeId: Joi.objectId().required()
+    villeId: Joi.objectId().required(),
+    responsableId:Joi.objectId()
  };
 
  return Joi.validate(zone, schema);

@@ -38,7 +38,7 @@ const schema = Joi.object().keys({
     .required(),
   ordre: Joi.number(),
   propositions: Joi.array()
-    .items(schemaJoiProposition.required(), schemaJoiProposition.required())
+    .items(schemaJoiProposition, schemaJoiProposition)
     .when("type", { is: ["Radio", "CheckBox"], then: Joi.required() })
     .when("type", { is: ["Text", "TextArea"], then: Joi.forbidden() })
 });
