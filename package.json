@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/Mehriano/ClientSatisfaction#readme",
   "dependencies": {
-    "bcrypt": "^3.0.4",
+    "bcrypt": "^5.0.0",
     "big-number": "^2.0.0",
     "config": "^3.0.1",
     "express": "^4.16.4",
