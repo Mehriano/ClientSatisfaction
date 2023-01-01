@@ -20,7 +20,7 @@
   "dependencies": {
     "bcrypt": "^3.0.4",
     "big-number": "^2.0.0",
-    "config": "^3.0.1",
+    "config": "^3.3.8",
     "express": "^4.16.4",
     "joi": "^14.3.1",
     "joi-objectid": "^2.0.0",
